@@ -14,7 +14,7 @@ function Experience() {
     <>
       <Perf position='top-left' />
       <Lights />
-      <Physics  >
+      <Physics debug >
         <StructModel />
         <Player />
       </Physics>

@@ -1,7 +1,11 @@
 import * as THREE from 'three'
 import waterSmokefragmentShader from '@/shaders/waterSmoke/fragment.glsl?raw'
 import waterSmokevertexShader from '@/shaders/waterSmoke/vertex.glsl?raw'
-import { perlin2dImg } from '@/assets/texture'
+import {
+  perlin2dImg,
+  doorArmTexure,
+  doorNormalTexture
+} from '@/assets/texture'
 
 const basicMaterial = new THREE.MeshBasicMaterial({
   color: 'white'
@@ -32,9 +36,30 @@ const waterSmokeMaterial = new THREE.ShaderMaterial(
   }
 )
 
+/**
+ * 
+ * 
+ */
+const doorMaterial = new THREE.MeshStandardMaterial({
+  aoMap: doorArmTexure,
+  metalness: 1,
+  metalnessMap: doorArmTexure,
+  roughnessMap: doorArmTexure,
+  normalMap: doorNormalTexture,
+  side: THREE.DoubleSide,
+  displacementScale: 0.1,
+  displacementBias: -0.05,
+  color: '#489CFA'
+})
+
+const basicDoorMateria = new THREE.MeshBasicMaterial({
+  color: '#489CFA'
+})
 
 export {
   glassMaterial,
   basicMaterial,
-  waterSmokeMaterial
+  waterSmokeMaterial,
+  doorMaterial,
+  basicDoorMateria
 }

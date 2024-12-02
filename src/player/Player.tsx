@@ -1,28 +1,13 @@
 
 import { RigidBody, RapierRigidBody, useRapier, CapsuleCollider } from '@react-three/rapier'
-import { useKeyboardControls } from '@react-three/drei'
 import { useRef, useMemo, RefObject, useEffect } from 'react'
-import { Controls } from '../const/index'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { OrbitControls, PointerLockControls, OrbitControlsProps } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-
-const speedScale = 3
-function getForwardDirection(camera: any, v: number) {
-  const vec3 = new THREE.Vector3()
-  vec3.setFromMatrixColumn(camera.matrix, 0);
-  vec3.crossVectors(camera.up, vec3);
-
-  return vec3.multiplyScalar(v * speedScale)
-}
-
-
-function getRightDirction(camera: any, v: number) {
-  const vec3 = new THREE.Vector3()
-  vec3.setFromMatrixColumn(camera.matrix, 0);
-  return vec3.multiplyScalar(v * speedScale)
-}
+import { useOperater } from '@/hooks/useOperater'
+import { getForwardDirection, getRightDirction } from '@/utils'
+const speedScale = 5
 
 const nextTranstion = new THREE.Vector3()
 // 跳跃时间
@@ -33,17 +18,6 @@ let isFallingFromStairs = false
 let isJumping = false
 let fallingTime = 0
 
-function useOperater() {
-  const forward = useKeyboardControls<Controls>(state => state.forward)
-  const back = useKeyboardControls<Controls>(state => state.back)
-  const left = useKeyboardControls<Controls>(state => state.left)
-  const right = useKeyboardControls<Controls>(state => state.right)
-  const jump = useKeyboardControls<Controls>(state => state.jump)
-
-  return useMemo(() => {
-    return [forward, back, left, right, jump]
-  }, [forward, back, left, right, jump])
-}
 
 function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
   const { rapier, world } = useRapier()
@@ -117,9 +91,9 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     const rightStrength = +right - +left
 
     nextTranstion.copy(
-      getForwardDirection(camera, forwordStrength)
+      getForwardDirection(camera, forwordStrength * speedScale)
     )
-    nextTranstion.add(getRightDirction(camera, rightStrength))
+    nextTranstion.add(getRightDirction(camera, rightStrength * speedScale))
 
     if (jump && !isJumping) {
       jumpTime = 0
