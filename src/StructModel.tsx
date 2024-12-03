@@ -16,13 +16,13 @@ function StructModel() {
 
   return (
     <>
-      {/* <RigidBody restitution={0} friction={10} type="fixed" colliders="trimesh">
+      <RigidBody restitution={0} friction={10} type="fixed" colliders="trimesh">
         <primitive object={model.scene} />
       </RigidBody>
       <ParticlesCursor />
       <ClockPoint obj3d={clockPoint} />
       <TeaCup obj3d={teaCup} />
-      <Door /> */}
+      <Door />
       <BallBoard obj3d={ballBoard} />
     </>
   )

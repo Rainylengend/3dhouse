@@ -7,17 +7,20 @@ import { Player } from './player/Player'
 import { useEffect } from 'react'
 import * as THREE from 'three'
 import { glassMaterial, basicMaterial } from '@/assets/materials'
+import { OrbitControls } from '@react-three/drei'
 
+import { CameraController } from './player/CameraControll'
 function Experience() {
 
   return (
     <>
       <Perf position='top-left' />
       <Lights />
-      <Physics debug >
+      <Physics   >
         <StructModel />
         <Player />
       </Physics>
+      <CameraController />
     </>
   )
 }

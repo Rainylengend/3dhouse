@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { useRef, useMemo } from 'react'
-import { RigidBody, RapierRigidBody, CuboidCollider } from '@react-three/rapier'
+import { RigidBody, RapierRigidBody } from '@react-three/rapier'
 import { ThreeEvent, useThree } from '@react-three/fiber'
 import { getForwardDirection } from '@/utils'
 
@@ -10,22 +10,28 @@ type Props = {
 function BallBoard({ obj3d }: Props) {
   const children = useMemo(() => {
     const board: THREE.Object3D[] = []
-    const ball: THREE.Object3D[] = []
-    let boardplane: THREE.Object3D | undefined
-    obj3d.children.forEach(child => {
-      if (child.name === 'boardplane') {
-        boardplane = child
-      }
-      else if (child.name.includes('ball')) {
-        ball.push(child)
+    const ball: { mesh: THREE.Mesh, rigidBodyPosition: THREE.Vector3 }[] = []
+    obj3d.children.forEach((child) => {
+      const c = child as THREE.Mesh
+      if (child.name.includes('ball')) {
+        (c.material as THREE.MeshStandardMaterial).flatShading = true
+
+        c.geometry = ball[0]?.mesh.geometry || c.geometry
+        const postion = child.position
+        postion.add(obj3d.position)
+        ball.push({
+          rigidBodyPosition: new THREE.Vector3(postion.x, postion.y, postion.z),
+          mesh: c
+        })
+        postion.set(0, 0, 0)
+
       } else {
         board.push(child)
       }
     })
     return {
       ball,
-      board,
-      boardplane
+      board
     }
   }, [obj3d])
   const ballRigdbody = useRef<{ [index: string]: RapierRigidBody }>({})
@@ -41,31 +47,27 @@ function BallBoard({ obj3d }: Props) {
     if (!targetBallRigdbody) {
       return
     }
-    const strength = 0.001
+    const strength = 0.0015
     const direction = getForwardDirection(camera, strength)
     direction.y = 0
     targetBallRigdbody.applyImpulse(direction, true)
-
     e.stopPropagation()
   }
 
 
   return (
     <>
-      <RigidBody friction={1} type="fixed" colliders="trimesh" position={obj3d.position} rotation={obj3d.rotation}>
+      <RigidBody position={obj3d.position} restitution={0.2} friction={1} type="fixed" colliders="trimesh">
         {children.board.map(item => {
           return (
             <primitive object={item} key={item.name} />
           )
         })}
       </RigidBody>
-      <RigidBody friction={1} type="fixed" position={obj3d.position} rotation={obj3d.rotation}>
-        <primitive object={children.boardplane!} />
-      </RigidBody>
       {children.ball.map(item => {
         return (
-          <RigidBody ref={v => setRef(v!, item.name)} type="dynamic" colliders="ball" position={obj3d.position} rotation={obj3d.rotation} key={item.name} >
-            <primitive object={item} onClick={onBallClick} />
+          <RigidBody type="dynamic" position={item.rigidBodyPosition} restitution={0.2} friction={1} ref={v => setRef(v!, item.mesh.name)} colliders="ball" key={item.mesh.name}>
+            <primitive object={item.mesh} onClick={onBallClick} position={[0, 0, 0]} />
           </RigidBody>
         )
       })}

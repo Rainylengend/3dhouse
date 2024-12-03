@@ -3,10 +3,10 @@ import { RigidBody, RapierRigidBody, useRapier, CapsuleCollider } from '@react-t
 import { useRef, useMemo, RefObject, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { OrbitControls } from '@react-three/drei'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useOperater } from '@/hooks/useOperater'
 import { getForwardDirection, getRightDirction } from '@/utils'
+import { CameraController } from './CameraControll'
 const speedScale = 5
 
 const nextTranstion = new THREE.Vector3()
@@ -116,7 +116,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
   }
 }
 
-function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>, orbitControls: RefObject<OrbitControlsImpl>) {
+function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
   const camera = useThree(state => state.camera)
   useEffect(() => {
     if (!rigidBody.current) {
@@ -125,7 +125,7 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>, orbitCon
     const headPosition = getPlayerHeadPosition()
     camera.position.copy(headPosition)
     headPosition.x += 0.1
-    orbitControls.current!.target = headPosition
+    camera.lookAt(headPosition)
   }, [])
   function getPlayerHeadPosition() {
     const bodyPosition = rigidBody.current!.translation()
@@ -141,7 +141,6 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>, orbitCon
     const headPosition = getPlayerHeadPosition()
     camera.position.copy(headPosition)
     headPosition.add(getForwardDirection(camera, 0.1))
-    orbitControls.current!.target = headPosition
   }
   const [forward, back, left, right, jump] = useOperater()
   useFrame((state) => {
@@ -151,14 +150,11 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>, orbitCon
 }
 function Player() {
   const rigidBodyRef = useRef<RapierRigidBody>(null)
-  const orbitControls = useRef<OrbitControlsImpl>(null)
-
   useCharactorControll(rigidBodyRef)
-  useCameraPositionUpdate(rigidBodyRef, orbitControls)
+  useCameraPositionUpdate(rigidBodyRef)
   return (
     <>
-      <OrbitControls enableZoom={false} enableDamping={false} ref={orbitControls} makeDefault />
-
+      <CameraController />
       <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={0} ref={rigidBodyRef} position={[0, 0.51, 0]} >
         <CapsuleCollider args={[0.5, 0.15]} />
       </RigidBody>
