@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useOperater } from '@/hooks/useOperater'
 import { getForwardDirection, getRightDirction } from '@/utils'
-const speedScale = 5
+const speedScale = 6
 
 new THREE.CylinderGeometry
 const nextTranstion = new THREE.Vector3()
@@ -150,7 +150,6 @@ function Player() {
   useCameraPositionUpdate(rigidBodyRef)
   return (
     <>
-      <axesHelper args={[10]} />
       {/* CapsuleCollider 胶囊上下两部分圆头搞0.105左右 */}
       <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={1} ref={rigidBodyRef} position={[0, 1.05, -1]} >
         <CapsuleCollider args={[0.5, 0.15]} />

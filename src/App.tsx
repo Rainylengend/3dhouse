@@ -18,6 +18,7 @@ function App() {
 
   return (
     <>
+      <div style={{ 'textAlign': 'right' }} id="demo" >0</div>
       <KeyboardControls map={map}>
         <Canvas camera={{ position: [0, 1, -1], fov: 45, near: .01, far: 100 }}>
           <Experience />

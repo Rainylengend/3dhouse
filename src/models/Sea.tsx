@@ -21,7 +21,6 @@ const water = new Water(waterGeometry, {
 function Sea() {
   return (
     <>
-      <axesHelper args={[100]} />
       <primitive object={water} position={[0, 4, 0]} rotation-x={-Math.PI / 2} />
       <RigidBody type='fixed' colliders={false} position={[0, 3.6, 0]}>
 
