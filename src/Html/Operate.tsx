@@ -1,13 +1,13 @@
 import { useInterfaceOperator } from "@/stores/interfaceOperator"
 import { Controls } from "@/const"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useRef } from "react"
 import { useOperater } from '@/hooks/useOperater'
 import { classNames } from '@/utils'
 
 function Operate() {
   const changeKeyResponse = useInterfaceOperator(state => state.changeKeyResponse)
   const [forward, back, left, right, jump] = useOperater()
-
+  const containerRef = useRef<HTMLDivElement>(null)
   const onPress = useMemo(() => {
     function pressFactory(controls: Controls) {
       return () => {
@@ -32,14 +32,14 @@ function Operate() {
       changeKeyResponse(Controls.right, false)
       changeKeyResponse(Controls.jump, false)
     }
-    window.addEventListener('touchend', fn)
+    containerRef.current!.addEventListener('touchend', fn)
     return () => {
-      window.removeEventListener('touchend', fn)
+      containerRef.current!.removeEventListener('touchend', fn)
     }
   }, [])
 
   return (
-    <div className="absolute w-fit bottom-[10vh]  inset-x-0 mx-auto pointer-events-auto">
+    <div ref={containerRef} className="absolute w-fit bottom-[10vh]  inset-x-0 mx-auto pointer-events-auto bg-slate-600 p-3 bg-opacity-60 rounded">
       <div className={classNames("bg-white", 'p-4', 'leading-none', 'rounded-sm', !forward && 'bg-opacity-30', 'text-center', 'w-fit', 'mx-auto', 'transition-opacity', 'select-none')} onTouchStart={onPress.forward}>W</div>
       <div className=" flex gap-1 mt-1">
         <div className={classNames("bg-white", 'p-4', 'leading-none', 'rounded-sm', !left && 'bg-opacity-30', 'text-center', 'transition-opacity', 'select-none')} onTouchStart={onPress.left}>A</div>

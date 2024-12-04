@@ -8,7 +8,7 @@ class CameraControls {
   private sizes: Vector2
   private beginCursor: Vector2 = new Vector2(9999, 9999)
   private currentCursor: Vector2 = new Vector2(9999, 9999)
-  private _intensity: number = 4
+  private _intensity: number = 2
   constructor(private camera: Camera, private canvas: HTMLCanvasElement) {
     this.sizes = new Vector2(canvas.clientWidth, canvas.clientHeight)
     this.pointerdown = this.pointerdown.bind(this)
@@ -47,7 +47,6 @@ class CameraControls {
     const direction = new Vector2().subVectors(this.currentCursor, this.beginCursor)
     lookDirection.copy({ x: 0, y: 0, z: -1 }).applyQuaternion(this.camera.quaternion)
     leftDirection.copy({ x: 0, y: 1, z: 0 }).applyQuaternion(this.camera.quaternion).cross(lookDirection)
-
     //点乘判断角度
     const v = lookDirection.dot(this.camera.up)
     let yAngle = direction.y * this._intensity

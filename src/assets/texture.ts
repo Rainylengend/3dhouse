@@ -9,17 +9,31 @@ perlin2dImg.wrapT = THREE.RepeatWrapping
 
 
 /** door */
-const doorArmTexure = textureLoader.load('/public/textures/door/wooden_garage_door_arm_1k.jpg')
+const doorArmTexure = textureLoader.load('./textures/door/wooden_garage_door_arm_1k.jpg')
 doorArmTexure.minFilter = THREE.NearestFilter
 doorArmTexure.generateMipmaps = false
-const doorNormalTexture = textureLoader.load('/public/textures/door/wooden_garage_door_nor_gl_1k.jpg')
+const doorNormalTexture = textureLoader.load('./textures/door/wooden_garage_door_nor_gl_1k.jpg')
 doorArmTexure.minFilter = THREE.NearestFilter
 doorArmTexure.generateMipmaps = false
+
+const waterNormalMap0 = textureLoader.load('./textures/water/Water_1_M_Normal.jpg')
+waterNormalMap0.wrapS = THREE.RepeatWrapping
+waterNormalMap0.wrapT = THREE.RepeatWrapping
+waterNormalMap0.generateMipmaps = false
+waterNormalMap0.repeat.set(10, 10)
+
+const waterNormalMap1 = textureLoader.load('./textures/water/Water_2_M_Normal.jpg')
+waterNormalMap1.wrapS = THREE.RepeatWrapping
+waterNormalMap1.wrapT = THREE.RepeatWrapping
+waterNormalMap1.generateMipmaps = false
+waterNormalMap1.repeat.set(10, 10)
 
 
 export {
   particleCursorTexture,
   perlin2dImg,
   doorArmTexure,
-  doorNormalTexture
+  doorNormalTexture,
+  waterNormalMap0,
+  waterNormalMap1
 }

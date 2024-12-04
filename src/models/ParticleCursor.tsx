@@ -35,7 +35,7 @@ function ParticlesCursor() {
   })
   return (
     <>
-      <points rotation={[0, Math.PI / 2, 0]} position={[-2.8, 1.6, 0]} geometry={particlesGeometry} material={particlesCursorMaterial}>
+      <points rotation={[0, Math.PI / 2, 0]} position={[-2.8, 2, -3.2]} geometry={particlesGeometry} material={particlesCursorMaterial}>
       </points>
       <mesh ref={placeholderRef} visible={false} rotation={[0, Math.PI / 2, 0]} position={[-2.8, 1.6, 0]}>
         <planeGeometry args={[2.5, 2.5]} />

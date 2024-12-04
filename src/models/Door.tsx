@@ -3,9 +3,9 @@ import { useRef } from 'react'
 import { doorMaterial, basicDoorMateria } from '@/assets/materials'
 import { RigidBody, CuboidCollider, RapierRigidBody } from '@react-three/rapier'
 import gsap from 'gsap'
+import { commonBoxGeometry } from '@/assets/geometry'
 
 
-const doorGeometry = new THREE.BoxGeometry(1, 1, 0.2)
 const materials = [basicDoorMateria, basicDoorMateria, basicDoorMateria, basicDoorMateria, doorMaterial, doorMaterial]
 
 let isOpen = false
@@ -27,9 +27,9 @@ function Door() {
   }
   return (
     <>
-      <RigidBody position={[1.6 + 0.85, 1.5, -3.2]} ref={doorRigidBody} type="kinematicPosition" colliders={false} >
+      <RigidBody position={[1.6 + 0.85, 1.9, -6.9]} ref={doorRigidBody} type="kinematicPosition" colliders={false} >
         <CuboidCollider args={[0.85, 1.5, 0.1]} position={[-0.85, 0, 0]} />
-        <mesh geometry={doorGeometry} material={materials} onPointerUp={onPointerDown} position-x={-0.85} scale={[1.7, 3, 1]} />
+        <mesh geometry={commonBoxGeometry} material={materials} onPointerUp={onPointerDown} position-x={-0.85} scale={[1.7, 3, .2]} />
       </RigidBody>ss
     </>
   )

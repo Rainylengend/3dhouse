@@ -3,10 +3,8 @@ import { RigidBody, RapierRigidBody, useRapier, CapsuleCollider } from '@react-t
 import { useRef, useMemo, RefObject, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useOperater } from '@/hooks/useOperater'
 import { getForwardDirection, getRightDirction } from '@/utils'
-import { CameraController } from './CameraControll'
 const speedScale = 5
 
 const nextTranstion = new THREE.Vector3()
@@ -122,16 +120,14 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
     if (!rigidBody.current) {
       return
     }
-    const headPosition = getPlayerHeadPosition()
-    camera.position.copy(headPosition)
-    headPosition.x += 0.1
-    camera.lookAt(headPosition)
+    setCamera(true, camera)
+    camera.lookAt(new THREE.Vector3(2.8, 1.7, -3.5))
   }, [])
   function getPlayerHeadPosition() {
     const bodyPosition = rigidBody.current!.translation()
     const headPosition = new THREE.Vector3()
     headPosition.copy(bodyPosition)
-    headPosition.y += 0.6
+    headPosition.y += 0.5
     return headPosition
   }
   function setCamera(isMove: boolean, camera: THREE.Camera) {
@@ -140,7 +136,6 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
     }
     const headPosition = getPlayerHeadPosition()
     camera.position.copy(headPosition)
-    headPosition.add(getForwardDirection(camera, 0.1))
   }
   const [forward, back, left, right, jump] = useOperater()
   useFrame((state) => {
@@ -154,8 +149,8 @@ function Player() {
   useCameraPositionUpdate(rigidBodyRef)
   return (
     <>
-      <CameraController />
-      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={0} ref={rigidBodyRef} position={[0, 0.51, 0]} >
+      <axesHelper args={[10]} />
+      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={0} ref={rigidBodyRef} position={[0, 0.5, -1]} >
         <CapsuleCollider args={[0.5, 0.15]} />
       </RigidBody>
     </>
