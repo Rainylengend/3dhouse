@@ -3,7 +3,7 @@ import { StructModel } from './StructModel'
 import { Physics } from '@react-three/rapier'
 import { Perf } from 'r3f-perf'
 import { Player } from './player/Player'
-import { OrbitControls } from '@react-three/drei'
+// import { OrbitControls } from '@react-three/drei'
 
 import { CameraController } from './player/CameraControll'
 function Experience() {
@@ -12,12 +12,12 @@ function Experience() {
     <>
       <Perf position='top-left' />
       <Lights />
-      <Physics debug >
+      <Physics>
         <StructModel />
         <Player />
       </Physics>
       <CameraController />
-      {/* <OrbitControls /> */}
+      {/* <OrbitControls enableDamping={false} /> */}
     </>
   )
 }

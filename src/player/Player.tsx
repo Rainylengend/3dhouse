@@ -7,6 +7,7 @@ import { useOperater } from '@/hooks/useOperater'
 import { getForwardDirection, getRightDirction } from '@/utils'
 const speedScale = 5
 
+new THREE.CylinderGeometry
 const nextTranstion = new THREE.Vector3()
 // 跳跃时间
 let jumpTime = 0
@@ -62,7 +63,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     if (!hit) {
       return
     }
-    return hit.timeOfImpact > 0.2
+    return hit.timeOfImpact > 0.15
   }
 
   useFrame((_, delta) => {
@@ -150,7 +151,8 @@ function Player() {
   return (
     <>
       <axesHelper args={[10]} />
-      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={0} ref={rigidBodyRef} position={[0, 0.5, -1]} >
+      {/* CapsuleCollider 胶囊上下两部分圆头搞0.105左右 */}
+      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={1} ref={rigidBodyRef} position={[0, 1.05, -1]} >
         <CapsuleCollider args={[0.5, 0.15]} />
       </RigidBody>
     </>

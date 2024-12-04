@@ -17,6 +17,8 @@ for (let i = 0; i < particlesGeometry.attributes.position.count; i++) {
 particlesGeometry.setAttribute('aIntensity', new THREE.BufferAttribute(intensitiesArray, 1))
 particlesGeometry.setAttribute('aAngle', new THREE.BufferAttribute(anglesArray, 1))
 
+const position = new THREE.Vector3(-2.8, 2, -3.2)
+const rotation = Math.PI / 2
 function ParticlesCursor() {
   useThree(state => {
     particlesCursorMaterial.uniforms.uResolution.value.x = state.size.width * state.viewport.dpr
@@ -35,9 +37,9 @@ function ParticlesCursor() {
   })
   return (
     <>
-      <points rotation={[0, Math.PI / 2, 0]} position={[-2.8, 2, -3.2]} geometry={particlesGeometry} material={particlesCursorMaterial}>
+      <points rotation-y={rotation} position={position} geometry={particlesGeometry} material={particlesCursorMaterial}>
       </points>
-      <mesh ref={placeholderRef} visible={false} rotation={[0, Math.PI / 2, 0]} position={[-2.8, 1.6, 0]}>
+      <mesh ref={placeholderRef} visible={false} rotation-y={rotation} position={position}>
         <planeGeometry args={[2.5, 2.5]} />
       </mesh>
     </>
