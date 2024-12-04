@@ -8,32 +8,26 @@ type Props = {
   obj3d: THREE.Object3D
 }
 function BallBoard({ obj3d }: Props) {
-  const children = useMemo(() => {
-    const board: THREE.Object3D[] = []
-    const ball: { mesh: THREE.Mesh, rigidBodyPosition: THREE.Vector3 }[] = []
-    obj3d.children.forEach((child) => {
-      const c = child as THREE.Mesh
-      if (child.name.includes('ball')) {
-        (c.material as THREE.MeshStandardMaterial).flatShading = true
-
-        c.geometry = ball[0]?.mesh.geometry || c.geometry
-        const postion = child.position
-        postion.add(obj3d.position)
-        ball.push({
-          rigidBodyPosition: new THREE.Vector3(postion.x, postion.y, postion.z),
-          mesh: c
-        })
-        postion.set(0, 0, 0)
-
-      } else {
-        board.push(child)
-      }
-    })
-    return {
-      ball,
-      board
+  const ball = useMemo(() => {
+    if (!obj3d.children.length) {
+      return []
     }
+    const firstGeometry = (obj3d.children[0] as THREE.Mesh).geometry
+    return obj3d.children.map((child) => {
+      const c = child as THREE.Mesh
+      (c.material as THREE.MeshStandardMaterial).flatShading = true
+      c.geometry = firstGeometry
+      const postion = child.position
+      postion.add(obj3d.position)
+      const res = {
+        rigidBodyPosition: new THREE.Vector3(postion.x, postion.y, postion.z),
+        mesh: c
+      }
+      postion.set(0, 0, 0)
+      return res
+    })
   }, [obj3d])
+
   const ballRigdbody = useRef<{ [index: string]: RapierRigidBody }>({})
   const camera = useThree(state => state.camera)
 
@@ -57,14 +51,7 @@ function BallBoard({ obj3d }: Props) {
 
   return (
     <>
-      <RigidBody position={obj3d.position} restitution={0.2} friction={1} type="fixed" colliders="trimesh">
-        {children.board.map(item => {
-          return (
-            <primitive object={item} key={item.name} />
-          )
-        })}
-      </RigidBody>
-      {children.ball.map(item => {
+      {ball.map(item => {
         return (
           <RigidBody type="dynamic" position={item.rigidBodyPosition} restitution={0.2} friction={1} ref={v => setRef(v!, item.mesh.name)} colliders="ball" key={item.mesh.name}>
             <primitive object={item.mesh} onClick={onBallClick} position={[0, 0, 0]} />

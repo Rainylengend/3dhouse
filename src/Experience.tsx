@@ -12,7 +12,7 @@ function Experience() {
     <>
       <Perf position='top-left' />
       <Lights />
-      <Physics>
+      <Physics >
         <StructModel />
         <Player />
       </Physics>
