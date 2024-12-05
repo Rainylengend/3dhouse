@@ -10,7 +10,7 @@ type Props = {
 function BallBoard({ obj3d }: Props) {
   const ball = useMemo(() => {
     if (!obj3d.children.length) {
-      return []
+      return null
     }
     const firstGeometry = (obj3d.children[0] as THREE.Mesh).geometry
     return obj3d.children.map((child) => {
@@ -19,12 +19,13 @@ function BallBoard({ obj3d }: Props) {
       c.geometry = firstGeometry
       const postion = child.position
       postion.add(obj3d.position)
-      const res = {
-        rigidBodyPosition: new THREE.Vector3(postion.x, postion.y, postion.z),
-        mesh: c
-      }
+      const rigidBodyPosition = new THREE.Vector3(postion.x, postion.y, postion.z)
       postion.set(0, 0, 0)
-      return res
+      return (
+        <RigidBody type="dynamic" position={rigidBodyPosition} restitution={0.2} friction={1} ref={v => setRef(v!, c.name)} colliders="ball" key={c.name}>
+          <primitive object={c} onClick={onBallClick} />
+        </RigidBody>
+      )
     })
   }, [obj3d])
 
@@ -49,17 +50,7 @@ function BallBoard({ obj3d }: Props) {
   }
 
 
-  return (
-    <>
-      {ball.map(item => {
-        return (
-          <RigidBody type="dynamic" position={item.rigidBodyPosition} restitution={0.2} friction={1} ref={v => setRef(v!, item.mesh.name)} colliders="ball" key={item.mesh.name}>
-            <primitive object={item.mesh} onClick={onBallClick} position={[0, 0, 0]} />
-          </RigidBody>
-        )
-      })}
-    </>
-  )
+  return ball
 }
 
 export {

@@ -28,7 +28,6 @@ waterNormalMap1.wrapT = THREE.RepeatWrapping
 waterNormalMap1.generateMipmaps = false
 waterNormalMap1.repeat.set(10, 10)
 
-
 export {
   particleCursorTexture,
   perlin2dImg,

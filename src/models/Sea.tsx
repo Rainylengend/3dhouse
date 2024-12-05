@@ -2,9 +2,6 @@ import { Water } from 'three/examples/jsm/objects/Water2.js';
 import * as THREE from 'three'
 import { waterNormalMap0, waterNormalMap1 } from '@/assets/texture'
 import { RigidBody, CuboidCollider } from '@react-three/rapier'
-
-
-
 const waterGeometry = new THREE.PlaneGeometry(1000, 1000);
 
 const water = new Water(waterGeometry, {
@@ -19,6 +16,8 @@ const water = new Water(waterGeometry, {
 
 
 function Sea() {
+
+
   return (
     <>
       <primitive object={water} position={[0, 4, 0]} rotation-x={-Math.PI / 2} />

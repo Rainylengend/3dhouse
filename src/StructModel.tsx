@@ -6,12 +6,12 @@ import { TeaCup } from './models/TeaCup'
 import { Door } from './models/Door'
 import { BallBoard } from './models/BoardBall'
 import { Sea } from './models/Sea'
+import { Fireworks } from './models/Fireworks'
 import { glassMaterial } from '@/assets/materials'
 
 function StructModel() {
   const model = useGLTF('/myexperience.glb')
   const { clockPoint, teaCup, ballParent, wallgrass, clockGlass } = model.nodes
-  console.log(model.nodes);
 
   return (
     <>
@@ -27,6 +27,7 @@ function StructModel() {
         <primitive object={wallgrass} material={glassMaterial} />
       </RigidBody>
       <primitive object={clockGlass} material={glassMaterial} />
+      <Fireworks />
       <Sea />
     </>
   )

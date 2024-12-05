@@ -12,15 +12,17 @@ const basicMaterial = new THREE.MeshBasicMaterial({
 })
 
 
-const glassMaterial = new THREE.MeshPhysicalMaterial({
-  transmission: 1,
-  ior: 1.517,
-  roughness: 0.1,
-  color: '#eeefff'
-})
-// const glassMaterial = new THREE.MeshBasicMaterial({
-//   color: 'white'
+// const glassMaterial = new THREE.MeshPhysicalMaterial({
+//   transmission: 1,
+//   ior: 1.517,
+//   roughness: 0.1,
+//   color: '#eeefff'
 // })
+const glassMaterial = new THREE.MeshBasicMaterial({
+  color: 'white',
+  opacity: 0.2,
+  transparent: true
+})
 
 const waterSmokeMaterial = new THREE.ShaderMaterial(
   {
