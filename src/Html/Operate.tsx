@@ -40,6 +40,7 @@ function Operate() {
   }, [])
 
   const fireworkIsPlaying = useFirework(state => state.fireworkIsPlaying)
+  const cameraPosition = useFirework(state => state.cameraPosition)
   const changeState = useFirework(state => state.changeState)
 
   return (
@@ -51,7 +52,12 @@ function Operate() {
         <div className={classNames("bg-white", 'p-2', 'leading-none', 'rounded-sm', !right && 'bg-opacity-30', 'text-center', 'transition-opacity', 'select-none')} onTouchStart={onPress.right}>D</div>
       </div>
       <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', !jump && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onTouchStart={onPress.jump}>SPACE</div>
-      <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', !fireworkIsPlaying && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onPointerDown={() => changeState(!fireworkIsPlaying)}>烟花</div>
+      {
+        cameraPosition.y >= 4 && (
+          <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', !fireworkIsPlaying && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onPointerDown={() => changeState(!fireworkIsPlaying)}>烟花</div>
+        )
+      }
+
     </div>
   )
 }

@@ -20,7 +20,7 @@ const basicMaterial = new THREE.MeshBasicMaterial({
 // })
 const glassMaterial = new THREE.MeshBasicMaterial({
   color: 'white',
-  opacity: 0.2,
+  opacity: 0.4,
   transparent: true
 })
 

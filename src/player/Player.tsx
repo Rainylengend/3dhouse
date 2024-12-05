@@ -4,6 +4,7 @@ import { useRef, useMemo, RefObject, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useOperater } from '@/hooks/useOperater'
+import { useFirework } from '@/stores/firework'
 import { getForwardDirection, getRightDirction } from '@/utils'
 const speedScale = 6
 
@@ -63,7 +64,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     if (!hit) {
       return
     }
-    return hit.timeOfImpact > 0.15
+    return hit.timeOfImpact > 0.2
   }
 
   useFrame((_, delta) => {
@@ -117,6 +118,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
 
 function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
   const camera = useThree(state => state.camera)
+  const updateCameraPosition = useFirework(state => state.updateCameraPosition)
   useEffect(() => {
     if (!rigidBody.current) {
       return
@@ -137,6 +139,7 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
     }
     const headPosition = getPlayerHeadPosition()
     camera.position.copy(headPosition)
+    updateCameraPosition(headPosition)
   }
   const [forward, back, left, right, jump] = useOperater()
   useFrame((state) => {
