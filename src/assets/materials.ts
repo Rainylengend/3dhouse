@@ -5,10 +5,8 @@ import {
   perlin2dImg,
   doorArmTexure,
   doorNormalTexture,
-  loadTexture
 } from '@/assets/texture'
 
-loadTexture()
 const basicMaterial = new THREE.MeshBasicMaterial({
   color: 'white'
 })

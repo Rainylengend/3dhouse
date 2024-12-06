@@ -9,17 +9,14 @@ type Nodes = {
 let structModel: GLTF & {
   nodes: Nodes
 }
-function loadModel() {
-  gltfLoader.load('./myexperience.glb', gltf => {
-    structModel = gltf as any
-    const nodes: Nodes = {}
-    gltf.scene.children.forEach(item => {
-      nodes[item.name] = item
-    })
-    structModel.nodes = nodes
+gltfLoader.load('./myexperience.glb', gltf => {
+  structModel = gltf as any
+  const nodes: Nodes = {}
+  gltf.scene.children.forEach(item => {
+    nodes[item.name] = item
   })
-}
+  structModel.nodes = nodes
+})
 export {
-  loadModel,
   structModel
 }
