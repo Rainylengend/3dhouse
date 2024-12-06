@@ -1,4 +1,3 @@
-import { useGLTF } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 import { ParticlesCursor } from './models/ParticleCursor'
 import { ClockPoint } from './models/ClockPoint'
@@ -8,11 +7,10 @@ import { BallBoard } from './models/BoardBall'
 import { Sea } from './models/Sea'
 import { Fireworks } from './models/Fireworks'
 import { glassMaterial } from '@/assets/materials'
+import { structModel as model } from '@/assets/model'
 
 function StructModel() {
-  const model = useGLTF('/myexperience.glb')
   const { clockPoint, teaCup, ballParent, wallgrass, clockGlass } = model.nodes
-
   return (
     <>
       <RigidBody restitution={0} friction={10} type="fixed" colliders="trimesh">

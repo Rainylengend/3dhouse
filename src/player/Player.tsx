@@ -9,14 +9,9 @@ import { getForwardDirection, getRightDirction } from '@/utils'
 
 new THREE.CylinderGeometry
 const nextTranstion = new THREE.Vector3()
-// 跳跃时间
 
-let isFallingFromStairs = false
-// 掉落时间， 如楼梯上掉下来
-let isJumping = false
-
-let timeOfFalling: number | null = null
-let initSpeed = 0
+// 掉落速度
+let currentFallingSpeed: number | null = null
 
 
 function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
@@ -27,8 +22,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
   const characterController = useMemo(() => {
     const offset = 0.01
     const characterController = world.createCharacterController(offset);
-    characterController.enableAutostep(0.6, 0.2, false);
-    characterController.enableSnapToGround(0.6);
+    characterController.enableAutostep(0.5, 0.4, false);
     return characterController
   }, [])
 
@@ -44,7 +38,6 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     // Read the result.
     const correctedMovement = characterController.computedMovement();
     currentMovement.add(correctedMovement);
-
     rigidBody.current!.setNextKinematicTranslation(currentMovement)
   }
 
@@ -65,42 +58,38 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     const isOnGround = checkUpAndDown(false)
 
     // 设置从空中落下的速度和时间
-    if (timeOfFalling === null) {
+    if (currentFallingSpeed === null) {
       // const isUp = checkUpAndDown(true)
       if (!isOnGround) {
-        timeOfFalling = 0
-        initSpeed = 0
+        currentFallingSpeed = 0
       }
 
     }
     if (isOnGround) {
-      timeOfFalling = null
+      currentFallingSpeed = null
     }
 
     // 设置跳跃的速度和时间
-    if (jump && timeOfFalling === null) {
-      timeOfFalling = 0
-      initSpeed = 5
-    }
-    if (timeOfFalling !== null) {
-      timeOfFalling += delta
+    if (jump && currentFallingSpeed === null) {
+      currentFallingSpeed = 6
     }
 
     const forwordStrength = +forward - +back
     const rightStrength = +right - +left
 
     // 期望走多少米
-    const meters = 6
-    nextTranstion.copy(
-      getForwardDirection(camera, forwordStrength * meters)
-    )
-    nextTranstion.add(getRightDirction(camera, rightStrength * meters))
-    nextTranstion.multiplyScalar(delta)
+    const meters = 5
+    const forwardDiection = getForwardDirection(camera, forwordStrength)
+    const rightDirction = getRightDirction(camera, rightStrength)
+    nextTranstion.copy(forwardDiection).add(rightDirction).normalize()
+    nextTranstion.multiplyScalar(meters * delta)
 
-
-    if (timeOfFalling !== null) {
-      initSpeed -= 9.81 * delta
-      nextTranstion.y += initSpeed * delta
+    if (currentFallingSpeed !== null) {
+      currentFallingSpeed -= 9.81 * delta
+      nextTranstion.y += currentFallingSpeed * delta
+    }
+    if (nextTranstion.length() === 0) {
+      return
     }
     move(nextTranstion)
   })
@@ -138,7 +127,7 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
   }
   const [forward, back, left, right, jump] = useOperater()
   useFrame((state) => {
-    const isMove = forward || back || left || right || jump || timeOfFalling !== null
+    const isMove = forward || back || left || right || jump || currentFallingSpeed !== null
     setCamera(isMove, state.camera)
   })
 }

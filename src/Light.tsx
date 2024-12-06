@@ -1,7 +1,7 @@
 import { useThree, useFrame } from '@react-three/fiber'
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { useEffect, useRef } from 'react';
-const rgbeLoader = new RGBELoader()
+import { dayTexture, nightTexture } from '@/assets/texture'
+
 import * as THREE from 'three'
 import { useFirework } from '@/stores/firework'
 
@@ -10,8 +10,6 @@ const environmentMaterial = new THREE.MeshBasicMaterial({
   side: THREE.BackSide
 })
 
-let dayTexture: THREE.DataTexture
-let nightTexture: THREE.DataTexture
 
 function Lights() {
   const { scene, camera } = useThree(state => {
@@ -27,15 +25,7 @@ function Lights() {
     scene.background = texture
   }
   useEffect(() => {
-    rgbeLoader.load('./environment.hdr', texture => {
-      texture.mapping = THREE.EquirectangularReflectionMapping
-      dayTexture = texture
-      setTexture(dayTexture)
-    })
-    rgbeLoader.load('./environment1.hdr', texture => {
-      texture.mapping = THREE.EquirectangularReflectionMapping
-      nightTexture = texture
-    })
+    setTexture(dayTexture)
     const unsubscribeFirework = useFirework.subscribe(state => state.fireworkIsPlaying, v => {
       if (v) {
         setTexture(nightTexture)
@@ -58,7 +48,7 @@ function Lights() {
       <mesh rotation={[0, -Math.PI / 2, 0]} visible={true} ref={mesh} material={environmentMaterial} >
         <sphereGeometry args={[30]} />
       </mesh>
-      <ambientLight args={['#fff', 1]} />
+      <ambientLight args={['#dff3a3', 0.6]} />
     </>
   )
 }

@@ -4,9 +4,11 @@ import waterSmokevertexShader from '@/shaders/waterSmoke/vertex.glsl?raw'
 import {
   perlin2dImg,
   doorArmTexure,
-  doorNormalTexture
+  doorNormalTexture,
+  loadTexture
 } from '@/assets/texture'
 
+loadTexture()
 const basicMaterial = new THREE.MeshBasicMaterial({
   color: 'white'
 })

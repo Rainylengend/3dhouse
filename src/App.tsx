@@ -5,6 +5,7 @@ import type { KeyboardControlsEntry } from '@react-three/drei'
 import { useMemo } from 'react'
 import { Controls } from './const/index'
 import { Entry } from '@/Html/Entry'
+import { useGlobal } from '@/stores/global'
 
 function App() {
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(() => [
@@ -14,17 +15,20 @@ function App() {
     { name: Controls.right, keys: ['ArrowRight', 'KeyD'] },
     { name: Controls.jump, keys: ['Space'] },
   ], [])
-
+  const isReady = useGlobal(state => state.isReady)
 
   return (
     <>
       <KeyboardControls map={map}>
-        <Canvas camera={{ position: [0, 1, -1], fov: 45, near: .01, far: 300 }}>
-          <Experience />
-        </Canvas>
+        {
+          isReady && (
+            <Canvas camera={{ position: [0, 1, -1], fov: 45, near: .01, far: 300 }}>
+              <Experience />
+            </Canvas>
+          )
+        }
         <Entry />
       </KeyboardControls >
-
     </>
   )
 

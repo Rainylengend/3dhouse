@@ -8,7 +8,7 @@ class CameraControls {
   private sizes: Vector2
   private beginCursor: Vector2 = new Vector2(9999, 9999)
   private currentCursor: Vector2 = new Vector2(9999, 9999)
-  private _intensity: number = 2
+  private _intensity: number = 3
   constructor(private camera: Camera, private canvas: HTMLCanvasElement) {
     this.sizes = new Vector2(canvas.clientWidth, canvas.clientHeight)
     this.pointerdown = this.pointerdown.bind(this)
