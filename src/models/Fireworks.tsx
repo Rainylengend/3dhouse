@@ -74,7 +74,6 @@ function createFirework({ count, position, texture, radius, scene, color, size }
   })
 }
 
-let strength = 10
 function Fireworks() {
   const { scene, camera } = useThree(state => {
     resolution.x = state.size.width * state.viewport.dpr
@@ -119,6 +118,7 @@ function Fireworks() {
   useEffect(() => {
     let timer: any
     let animationFrame: number
+    const baseStrength = 1
     const unsubscribe = useFirework.subscribe(state => state.fireworkIsPlaying, v => {
       if (!v) {
         clearTimeout(timer)
@@ -130,7 +130,7 @@ function Fireworks() {
         createRandomFirework()
         timer = setTimeout(() => {
           animationFrame = requestAnimationFrame(doPlay)
-        }, 100)
+        }, 100 / baseStrength)
       }
       doPlay()
     })
