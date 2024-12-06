@@ -51,7 +51,7 @@ function useMobileControl() {
     // 球的运动半径
     const ballRadius = 40
 
-    window.addEventListener('pointermove', e => {
+    controlRef.current!.addEventListener('pointermove', e => {
       if (!isControlling) {
         return
       }
@@ -112,7 +112,7 @@ function Operate() {
 
   return (
     <div className="text-xs absolute w-fit bottom-[1vh]  inset-x-0 mx-auto pointer-events-auto bg-slate-600 p-3 bg-opacity-60 rounded">
-      <div ref={controlRef} className="w-32 h-32 rounded-full bg-slate-50 bg-opacity-30 flex border-2 border-violet-600">
+      <div ref={controlRef} className="touch-none w-32 h-32 rounded-full bg-slate-50 bg-opacity-30 flex border-2 border-violet-600">
         <div ref={controlPointRef} className="w-10 h-10 rounded-full bg-slate-50 m-auto
          border-2 border-violet-600"></div>
       </div>
