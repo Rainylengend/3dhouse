@@ -6,17 +6,17 @@ import * as THREE from 'three'
 import { useOperater } from '@/hooks/useOperater'
 import { useFirework } from '@/stores/firework'
 import { getForwardDirection, getRightDirction } from '@/utils'
-const speedScale = 6
 
 new THREE.CylinderGeometry
 const nextTranstion = new THREE.Vector3()
 // 跳跃时间
-let jumpTime = 0
 
 let isFallingFromStairs = false
 // 掉落时间， 如楼梯上掉下来
 let isJumping = false
-let fallingTime = 0
+
+let timeOfFalling: number | null = null
+let initSpeed = 0
 
 
 function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
@@ -48,64 +48,59 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     rigidBody.current!.setNextKinematicTranslation(currentMovement)
   }
 
-  function getYTransition(v: number, time: number) {
-    return v * time + time * time * -9.81 / 2 - nextTranstion.y
-  }
 
-
-  function checkIsFallFromStairs() {
-    if (!rigidBody.current) {
-      return
-    }
-    const origin = rigidBody.current.translation()
-    origin.y -= 0.5
-    const ray = new rapier.Ray(origin, { x: 0, y: -1, z: 0 })
-    const hit = world.castRay(ray, 10, true, 2);
-    if (!hit) {
-      return
-    }
-    return hit.timeOfImpact > 0.2
+  function checkUpAndDown(isUp: boolean) {
+    const origin = rigidBody.current!.translation()
+    const offset = isUp ? 0.606 : -0.606
+    origin.y += offset
+    const ray = new rapier.Ray(origin, { x: 0, y: isUp ? 1 : -1, z: 0 })
+    const hit = world.castRay(ray, 10000, true, 2);
+    return (hit?.timeOfImpact || 0) < 0.06
   }
 
   useFrame((_, delta) => {
     if (!rigidBody.current) {
       return
     }
-    const isOnGround = characterController.computedGrounded()
-    if (!isJumping && !isFallingFromStairs) {
-      const isFallFromStairs = checkIsFallFromStairs()
-      if (isFallFromStairs) {
-        fallingTime = 0
-        isFallingFromStairs = true
+    const isOnGround = checkUpAndDown(false)
+
+    // 设置从空中落下的速度和时间
+    if (timeOfFalling === null) {
+      // const isUp = checkUpAndDown(true)
+      if (!isOnGround) {
+        timeOfFalling = 0
+        initSpeed = 0
       }
+
+    }
+    if (isOnGround) {
+      timeOfFalling = null
     }
 
-    if (isOnGround) {
-      isFallingFromStairs = false
-      isJumping = false
-    } else {
-      fallingTime += delta
-      jumpTime += delta
+    // 设置跳跃的速度和时间
+    if (jump && timeOfFalling === null) {
+      timeOfFalling = 0
+      initSpeed = 5
     }
+    if (timeOfFalling !== null) {
+      timeOfFalling += delta
+    }
+
     const forwordStrength = +forward - +back
     const rightStrength = +right - +left
 
+    // 期望走多少米
+    const meters = 6
     nextTranstion.copy(
-      getForwardDirection(camera, forwordStrength * speedScale)
+      getForwardDirection(camera, forwordStrength * meters)
     )
-    nextTranstion.add(getRightDirction(camera, rightStrength * speedScale))
-
-    if (jump && !isJumping) {
-      jumpTime = 0
-      isJumping = true
-    }
+    nextTranstion.add(getRightDirction(camera, rightStrength * meters))
     nextTranstion.multiplyScalar(delta)
-    if (isJumping) {
-      nextTranstion.y += getYTransition(2.5, jumpTime)
-    }
 
-    if (isFallingFromStairs) {
-      nextTranstion.y += getYTransition(0, fallingTime)
+
+    if (timeOfFalling !== null) {
+      initSpeed -= 9.81 * delta
+      nextTranstion.y += initSpeed * delta
     }
     move(nextTranstion)
   })
@@ -143,7 +138,7 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
   }
   const [forward, back, left, right, jump] = useOperater()
   useFrame((state) => {
-    const isMove = forward || back || left || right || jump || isJumping || isFallingFromStairs
+    const isMove = forward || back || left || right || jump || timeOfFalling !== null
     setCamera(isMove, state.camera)
   })
 }
@@ -154,7 +149,7 @@ function Player() {
   return (
     <>
       {/* CapsuleCollider 胶囊上下两部分圆头搞0.105左右 */}
-      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={1} ref={rigidBodyRef} position={[0, 1.05, -1]} >
+      <RigidBody colliders={false} type="kinematicPosition" restitution={0} friction={1} ref={rigidBodyRef} position={[0, 2.05, -4]} >
         <CapsuleCollider args={[0.5, 0.15]} />
       </RigidBody>
     </>
