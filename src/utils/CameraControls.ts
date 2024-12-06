@@ -50,7 +50,7 @@ class CameraControls {
     //点乘判断角度
     const v = lookDirection.dot(this.camera.up)
     let yAngle = direction.y * this._intensity
-    if (direction.y < 0 && v > 0.9 || direction.y > 0 && v < -0.6) {
+    if (direction.y < 0 && v > 0.8 || direction.y > 0 && v < -0.6) {
       yAngle = 0
     }
     let xAngle = direction.x * this._intensity

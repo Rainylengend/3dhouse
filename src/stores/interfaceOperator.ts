@@ -1,18 +1,22 @@
 import { create } from 'zustand'
-import { Controls } from '@/const'
+import { Vector2 } from 'three'
 
-type State = Record<Controls, boolean> & {
-  changeKeyResponse: (key: Controls, v: boolean) => void
+
+type State = {
+  direction: Vector2,
+  jump: boolean
+  changeDirection: (v: Vector2) => void
+  changeJump: (v: boolean) => void
 }
 
 const useInterfaceOperator = create<State>((set) => ({
-  [Controls.jump]: false,
-  [Controls.left]: false,
-  [Controls.right]: false,
-  [Controls.forward]: false,
-  [Controls.back]: false,
-  changeKeyResponse: (key, v) => set(() => ({
-    [key]: v
+  direction: new Vector2(),
+  jump: false,
+  changeDirection: (v) => set(() => ({
+    direction: v
+  })),
+  changeJump: (v) => set(() => ({
+    jump: v
   }))
 }))
 

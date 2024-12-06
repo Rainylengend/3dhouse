@@ -18,7 +18,7 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
   const { rapier, world } = useRapier()
 
   const camera = useThree(state => state.camera)
-  const [forward, back, left, right, jump] = useOperater()
+  const controllerDirection = useOperater()
   const characterController = useMemo(() => {
     const offset = 0.01
     const characterController = world.createCharacterController(offset);
@@ -70,12 +70,13 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     }
 
     // 设置跳跃的速度和时间
-    if (jump && currentFallingSpeed === null) {
+    if (controllerDirection.y && currentFallingSpeed === null) {
       currentFallingSpeed = 6
     }
 
-    const forwordStrength = +forward - +back
-    const rightStrength = +right - +left
+    const forwordStrength = controllerDirection.z
+    const rightStrength = controllerDirection.x
+
 
     // 期望走多少米
     const meters = 5
@@ -125,9 +126,9 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
     camera.position.copy(headPosition)
     updateCameraPosition(headPosition)
   }
-  const [forward, back, left, right, jump] = useOperater()
+  const controllerDirection = useOperater()
   useFrame((state) => {
-    const isMove = forward || back || left || right || jump || currentFallingSpeed !== null
+    const isMove = controllerDirection.length() > 0 || currentFallingSpeed !== null
     setCamera(isMove, state.camera)
   })
 }
