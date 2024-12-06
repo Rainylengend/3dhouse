@@ -1,6 +1,6 @@
 import { useInterfaceOperator } from "@/stores/interfaceOperator"
 import { Controls } from "@/const"
-import { useMemo, useEffect, useRef } from "react"
+import { useMemo, useEffect, useRef, useState } from "react"
 import { useOperater } from '@/hooks/useOperater'
 import { useFirework } from '@/stores/firework'
 import { classNames } from '@/utils'
@@ -39,12 +39,21 @@ function Operate() {
     }
   }, [])
 
-  const fireworkIsPlaying = useFirework(state => state.fireworkIsPlaying)
-  const cameraPosition = useFirework(state => state.cameraPosition)
-  const changeState = useFirework(state => state.changeState)
 
+  const fireworkIsPlaying = useFirework(state => state.fireworkIsPlaying)
+  const changeState = useFirework(state => state.changeState)
+  const [isShowFireBtn, setIsShowFireBtn] = useState(false)
+  useEffect(() => {
+    return useFirework.subscribe(d => d.cameraPosition, position => {
+      const isShowFireBtn = position.y >= 4
+      if (!isShowFireBtn) {
+        changeState(false)
+      }
+      setIsShowFireBtn(isShowFireBtn)
+    })
+  }, [])
   return (
-    <div ref={containerRef} className="absolute w-fit bottom-[1vh]  inset-x-0 mx-auto pointer-events-auto bg-slate-600 p-3 bg-opacity-60 rounded">
+    <div ref={containerRef} className="text-xs absolute w-fit bottom-[1vh]  inset-x-0 mx-auto pointer-events-auto bg-slate-600 p-3 bg-opacity-60 rounded">
       <div className={classNames("bg-white", 'p-2', 'leading-none', 'rounded-sm', !forward && 'bg-opacity-30', 'text-center', 'w-fit', 'mx-auto', 'transition-opacity', 'select-none')} onTouchStart={onPress.forward}>W</div>
       <div className=" flex gap-1 mt-1">
         <div className={classNames("bg-white", 'p-2', 'leading-none', 'rounded-sm', !left && 'bg-opacity-30', 'text-center', 'transition-opacity', 'select-none')} onTouchStart={onPress.left}>A</div>
@@ -53,7 +62,7 @@ function Operate() {
       </div>
       <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', !jump && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onTouchStart={onPress.jump}>SPACE</div>
       {
-        cameraPosition.y >= 4 && (
+        isShowFireBtn && (
           <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', !fireworkIsPlaying && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onPointerDown={() => changeState(!fireworkIsPlaying)}>烟花</div>
         )
       }

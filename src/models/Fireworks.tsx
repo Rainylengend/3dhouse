@@ -90,13 +90,13 @@ function Fireworks() {
 
     const position = new THREE.Vector3()
     position.setFromMatrixColumn(camera.matrix, 2)
-    position.multiplyScalar(-10)
+    position.multiplyScalar(-20)
     position.add(camera.position)
     const cameraXias = new THREE.Vector3()
     cameraXias.setFromMatrixColumn(camera.matrix, 0)
-    cameraXias.multiplyScalar((Math.random() - 0.5) * 10)
+    cameraXias.multiplyScalar((Math.random() - 0.5) * 24)
     position.add(cameraXias)
-    position.y += (Math.random() - 0.5) * 2 + 1
+    position.y += (Math.random() - 0.5) * 6 + 2
 
 
 
@@ -126,15 +126,11 @@ function Fireworks() {
         return
       }
 
-
       function doPlay() {
-        const count = Math.random() * strength | 0
-        for (let i = 0; i < count + 2; i++) {
-          createRandomFirework()
-        }
+        createRandomFirework()
         timer = setTimeout(() => {
           animationFrame = requestAnimationFrame(doPlay)
-        }, 2000)
+        }, 100)
       }
       doPlay()
     })
