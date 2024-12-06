@@ -95,7 +95,7 @@ function Fireworks() {
     cameraXias.setFromMatrixColumn(camera.matrix, 0)
     cameraXias.multiplyScalar((Math.random() - 0.5) * 24)
     position.add(cameraXias)
-    position.y += (Math.random() - 0.5) * 6 + 2
+    position.y += (Math.random() - 0.5) * 8 + 2
 
 
 
@@ -118,7 +118,7 @@ function Fireworks() {
   useEffect(() => {
     let timer: any
     let animationFrame: number
-    const baseStrength = 1
+    const baseStrength = 2
     const unsubscribe = useFirework.subscribe(state => state.fireworkIsPlaying, v => {
       if (!v) {
         clearTimeout(timer)
