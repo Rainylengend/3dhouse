@@ -7,7 +7,10 @@ import { useFirework } from '@/stores/firework'
 import { classNames } from '@/utils'
 import { Vector2 } from 'three'
 
-
+type PointEvent = MouseEvent & {
+  pointerId: number
+}
+let currentPointId: number | null
 function useMobileControl() {
   const controlRef = useRef<HTMLDivElement>(null)
   const controlPointRef = useRef<HTMLDivElement>(null)
@@ -31,19 +34,24 @@ function useMobileControl() {
         direction
       )
     }
-    controlRef.current?.addEventListener('pointerdown', (e) => {
+    controlRef.current?.addEventListener('pointerdown', (e: PointEvent) => {
+      currentPointId = e.pointerId
       currentCoord.x = e.clientX
       currentCoord.y = e.clientY
       isControlling = true
     }, {
       signal: abortController.signal
     })
-    window.addEventListener('pointerup', () => {
+    window.addEventListener('pointerup', (e: PointEvent) => {
+      changeJump(false)
+      if (e.pointerId !== currentPointId) {
+        return
+      }
+      currentPointId = null
       isControlling = false
       currentTranslate.x = currentTranslate.y = 0
       updateControlPointPosition(0, 0)
       updateDirection()
-      changeJump(false)
     }, {
       signal: abortController.signal
     })
@@ -51,8 +59,8 @@ function useMobileControl() {
     // 球的运动半径
     const ballRadius = 40
 
-    controlRef.current!.addEventListener('pointermove', e => {
-      if (!isControlling) {
+    window.addEventListener('pointermove', (e: PointEvent) => {
+      if (!isControlling || currentPointId !== e.pointerId) {
         return
       }
       const { clientX, clientY } = e
@@ -113,8 +121,7 @@ function Operate() {
   return (
     <div className="text-xs absolute w-fit bottom-[1vh]  inset-x-0 mx-auto pointer-events-auto bg-slate-600 p-3 bg-opacity-60 rounded">
       <div ref={controlRef} className="touch-none w-32 h-32 rounded-full bg-slate-50 bg-opacity-30 flex border-2 border-violet-600">
-        <div ref={controlPointRef} className="w-10 h-10 rounded-full bg-slate-50 m-auto
-         border-2 border-violet-600"></div>
+        <div ref={controlPointRef} className="w-10 h-10 rounded-full bg-slate-50 m-auto border-2 border-violet-600"></div>
       </div>
 
       <div className={classNames("bg-white", 'mt-1', 'p-2', 'leading-none', 'rounded-sm', operate.y === 0 && 'bg-opacity-30', 'text-center', 'mx-auto', 'transition-opacity', 'select-none')} onPointerDown={() => changeJump(true)}>SPACE</div>

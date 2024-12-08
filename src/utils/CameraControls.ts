@@ -4,11 +4,16 @@ const cameraLookAt = new Vector3()
 const lookDirection = new Vector3()
 const leftDirection = new Vector3()
 
+type PointEvent = MouseEvent & {
+  pointerId: number
+}
+
 class CameraControls {
   private sizes: Vector2
   private beginCursor: Vector2 = new Vector2(9999, 9999)
   private currentCursor: Vector2 = new Vector2(9999, 9999)
   private _intensity: number = 3
+  private currentPointId: number | null = null
   constructor(private camera: Camera, private canvas: HTMLCanvasElement) {
     this.sizes = new Vector2(canvas.clientWidth, canvas.clientHeight)
     this.pointerdown = this.pointerdown.bind(this)
@@ -33,14 +38,15 @@ class CameraControls {
   get intensity() {
     return this._intensity
   }
-  set(v: number) {
+  set intensity(v: number) {
     this._intensity = v
   }
-  private pointerdown(event: MouseEvent) {
+  private pointerdown(event: PointEvent) {
+    this.currentPointId = event.pointerId
     this.getCursor(event, this.beginCursor)
   }
-  private pointermove(event: MouseEvent) {
-    if (this.beginCursor.x === 9999 && this.beginCursor.y === 9999) {
+  private pointermove(event: PointEvent) {
+    if (this.beginCursor.x === 9999 && this.beginCursor.y === 9999 || this.currentPointId !== event.pointerId) {
       return
     }
     this.getCursor(event, this.currentCursor)
@@ -61,14 +67,16 @@ class CameraControls {
     quaternion.setFromAxisAngle({ x: 0, y: 1, z: 0 }, -xAngle)
     cameraLookAt.applyQuaternion(quaternion)
 
-
     cameraLookAt.add(this.camera.position)
     this.camera.lookAt(cameraLookAt)
 
     this.beginCursor.copy(this.currentCursor)
   }
-  private pointerup() {
-    this.beginCursor.x = this.beginCursor.y = 9999
+  private pointerup(event: PointEvent) {
+    if (event.pointerId === this.currentPointId) {
+      this.currentPointId = null
+      this.beginCursor.x = this.beginCursor.y = 9999
+    }
   }
 
   private getCursor(event: MouseEvent, point: Vector2) {

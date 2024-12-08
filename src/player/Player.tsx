@@ -5,16 +5,17 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useOperater } from '@/hooks/useOperater'
 import { useFirework } from '@/stores/firework'
-import { getForwardDirection, getRightDirction } from '@/utils'
+import { getForwardDirection, getRightDirection } from '@/utils'
 
 new THREE.CylinderGeometry
-const nextTranstion = new THREE.Vector3()
+const nextTransition = new THREE.Vector3()
 
 // 掉落速度
 let currentFallingSpeed: number | null = null
 
 
-function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
+let newDelta: number = 0
+function useCharacterController(rigidBody: RefObject<RapierRigidBody>) {
   const { rapier, world } = useRapier()
 
   const camera = useThree(state => state.camera)
@@ -55,6 +56,10 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
     if (!rigidBody.current) {
       return
     }
+    if (newDelta < 0.014) {
+      newDelta += delta
+      return
+    }
     const isOnGround = checkUpAndDown(false)
 
     // 设置从空中落下的速度和时间
@@ -74,25 +79,26 @@ function useCharactorControll(rigidBody: RefObject<RapierRigidBody>) {
       currentFallingSpeed = 6
     }
 
-    const forwordStrength = controllerDirection.z
+    const forwardStrength = controllerDirection.z
     const rightStrength = controllerDirection.x
 
 
     // 期望走多少米
     const meters = 5
-    const forwardDiection = getForwardDirection(camera, forwordStrength)
-    const rightDirction = getRightDirction(camera, rightStrength)
-    nextTranstion.copy(forwardDiection).add(rightDirction).normalize()
-    nextTranstion.multiplyScalar(meters * delta)
+    const forwardDirection = getForwardDirection(camera, forwardStrength)
+    const rightDirection = getRightDirection(camera, rightStrength)
+    nextTransition.copy(forwardDirection).add(rightDirection).normalize()
+    nextTransition.multiplyScalar(meters * newDelta)
 
     if (currentFallingSpeed !== null) {
-      currentFallingSpeed -= 9.81 * delta
-      nextTranstion.y += currentFallingSpeed * delta
+      currentFallingSpeed -= 9.81 * newDelta
+      nextTransition.y += currentFallingSpeed * newDelta
     }
-    if (nextTranstion.length() === 0) {
+    newDelta = 0
+    if (nextTransition.length() === 0) {
       return
     }
-    move(nextTranstion)
+    move(nextTransition)
   })
 
   return {
@@ -134,7 +140,7 @@ function useCameraPositionUpdate(rigidBody: RefObject<RapierRigidBody>) {
 }
 function Player() {
   const rigidBodyRef = useRef<RapierRigidBody>(null)
-  useCharactorControll(rigidBodyRef)
+  useCharacterController(rigidBodyRef)
   useCameraPositionUpdate(rigidBodyRef)
   return (
     <>

@@ -13,7 +13,7 @@ function getForwardDirection(camera: any, v: number) {
 }
 
 
-function getRightDirction(camera: any, v: number) {
+function getRightDirection(camera: any, v: number) {
   const vec3 = new THREE.Vector3()
   vec3.setFromMatrixColumn(camera.matrix, 0);
   return vec3.multiplyScalar(v)
@@ -22,6 +22,6 @@ function getRightDirction(camera: any, v: number) {
 export {
   classNames,
   getForwardDirection,
-  getRightDirction
+  getRightDirection
 }
 
