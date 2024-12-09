@@ -84,7 +84,7 @@ function useCharacterController(rigidBody: RefObject<RapierRigidBody>) {
 
 
     // 期望走多少米
-    const meters = 5
+    const meters = 6
     const forwardDirection = getForwardDirection(camera, forwardStrength)
     const rightDirection = getRightDirection(camera, rightStrength)
     nextTransition.copy(forwardDirection).add(rightDirection).normalize()
